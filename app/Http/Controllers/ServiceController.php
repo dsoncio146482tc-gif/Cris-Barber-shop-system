@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request; use Illuminate\Support\Facades\DB; use Illuminate\Support\Str;
+class ServiceController extends Controller { public function store(Request $r) {$this->admin($r);$d=$r->validate(['name'=>['required','string','max:100'],'price'=>['required','numeric','min:0'],'duration_minutes'=>['required','integer','min:5','max:600'],'description'=>['nullable','string','max:1000']]);DB::table('services')->insert($d+['id'=>(string)Str::uuid(),'created_at'=>now(),'updated_at'=>now()]);return back()->with('status','Service added.');} public function destroy(Request $r,string $id) {$this->admin($r);DB::table('services')->where('id',$id)->delete();return back()->with('status','Service removed.');} private function admin(Request $r):void {abort_unless($r->user()->role==='admin',403);}}
